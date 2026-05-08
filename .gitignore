@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+.superpowers/
+.claude/
+.worktrees/
+
+# Marketing redesign — W1 dev preview routes (delete after W6)
+/app/(marketing)/dev-only/
