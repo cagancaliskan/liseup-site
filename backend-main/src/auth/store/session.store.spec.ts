@@ -53,5 +53,6 @@ describe('SessionStore.findSession', () => {
     expect(record).not.toBeNull();
     expect(record!.userPayload.role).toBe(Role.Vendor);
     expect(record!.userPayload.userEmail).toBe('test@example.com');
+    expect(record!.userPayload.userName).toBe('test@example.com');
   });
 });
