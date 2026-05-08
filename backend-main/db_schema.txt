@@ -1,0 +1,127 @@
+users
+    id - ulid
+    email - text[unique]
+    email_verification_code - text?
+    new_email - text?
+    password - text
+    role - int
+    status - int
+    notes
+        password hashed by bcrypt
+        role refers to an enum
+        status refers to an enum
+        status -> suspended, waitingemailapprovment, active, ...
+
+schools
+    id - ulid
+    admin_id - ulid
+    name - text
+    city - text
+    type - int
+    notes
+        type refers to an enum
+        type -> university, highscool
+
+sessions
+    id - ulid
+    user_id - ulid
+    user_agent - text
+    refresh_token - text
+    expires_at - datetime?
+
+students
+    user_id - ulid
+    school_id - ulid
+    grade - int
+    parent_email - text
+    lp_balance - int
+    consent_status - bool
+    achievements - jsonb
+    total_xp - int
+    notes
+        grade refers to an enum
+
+categories
+    id - int
+    name - text
+
+mentors
+    user_id - ulid
+    university - ulid
+    expertise - int[]
+    bio - text
+    notes
+        expertise refers to categories->id
+
+messages
+    id - ulid
+    sender_id - ulid
+    receiver_id - ulid
+    content - text[500]
+    is_read - bool
+
+projects
+    id - ulid
+    team_id - ulid
+    mentor_id - ulid?
+    title - text
+    description - text
+    category - int
+    phase - int
+    status - int
+    notes
+        category refers to categories->id
+        phase refers to an enum
+        status refers to an enum
+
+teams
+    id - ulid
+    owner_id - ulid
+    name - text
+
+team_members
+    user_id - ulid
+    team_id - ulid
+    role - int
+    status - int
+    notes
+        role refers to an enum
+        status refers to an enum
+        status -> does the team member waiting for the invitation
+
+vendors
+    id - ulid
+    manager_id - ulid
+    name - text
+    logo - text?
+    categories - int[]
+    notes
+        categories refers to an array of category ids
+
+products
+    id - ulid
+    vendor_id - ulid
+    name - text
+    description - text
+    stock_count - int?
+    images - text[]
+
+cart_items
+    id - ulid
+    user_id - ulid
+    product_id - ulid
+    amount - int
+    note - text[300]?
+
+transactions
+    id - ulid
+    user_id - ulid
+    team_id - ulid
+    cart - jsonb
+    description - text
+    hash - text
+    notes
+        cart refers to a json object
+            items - array[cart_item]
+            lp_total - int
+        hash = hmacsha256(id + cart + team_id)

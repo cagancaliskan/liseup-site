@@ -1,26 +1,429 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
+
+/*
+  LiseUP Token Spine — Pass 1 + Marketing Redesign W1
+  Palette: monokromatik mavi (#3871DF primary) + slate
+  Typography: Livvic (display) + Inter (body, Pro/Studio fit) + JetBrains Mono
+  Motion: Instrumental cubic-bezier(0.2, 0, 0, 1) @ 80–1200ms
+  Aesthetic: Pro/Studio — light primary + dark mode, brand as accent
+*/
 
 @theme inline {
+  /* Shadcn semantic tokens wired to LiseUP palette */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* LiseUP brand scale */
+  --color-brand-50: #eff4fd;
+  --color-brand-100: #d9e5fa;
+  --color-brand-200: #b4cbf5;
+  --color-brand-300: #8bafee;
+  --color-brand-400: #5f8fe4;
+  --color-brand-500: #3871df;
+  --color-brand-600: #2c5cc8;
+  --color-brand-700: #1f47a5;
+  --color-brand-800: #163a86;
+  --color-brand-900: #14306d;
+
+  /* Slate scale (neutrals) */
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+
+  /* Semantic */
+  --color-success: #16a34a;
+  --color-warning: #f59e0b;
+  --color-info: #3b82f6;
+
+  /* Marketing surface tokens (Pro/Studio aesthetic — wired to root vars below) */
+  --color-surface-0: var(--surface-0);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-rule: var(--rule);
+
+  /* Fonts */
+  --font-sans: var(--font-ui);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
+
+  /* Radius */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+
+  /* Motion — extended scale for hero choreography */
+  --ease-instrumental: cubic-bezier(0.2, 0, 0, 1);    /* primary, in/out balanced */
+  --ease-cinematic: cubic-bezier(0.65, 0, 0.35, 1);   /* hero choreography */
+  --ease-soft: cubic-bezier(0.25, 0.46, 0.45, 0.94);  /* shader drift, ambient */
+  --duration-xfast: 80ms;        /* button press */
+  --duration-fast: 150ms;        /* hover */
+  --duration-base: 220ms;        /* default transition */
+  --duration-slow: 320ms;        /* layout shift */
+  --duration-xslow: 600ms;       /* hero stagger word */
+  --duration-xxslow: 1200ms;     /* shader fade-in, accent rule draw */
+
+  /* Shadow scale */
+  --shadow-subtle: 0 1px 2px 0 rgb(15 23 42 / 0.04);
+  --shadow-card: 0 1px 3px 0 rgb(15 23 42 / 0.06), 0 1px 2px -1px rgb(15 23 42 / 0.06);
+  --shadow-lift: 0 10px 30px -12px rgb(56 113 223 / 0.18);
+  --shadow-dramatic: 0 24px 60px -20px rgb(56 113 223 / 0.35), 0 8px 24px -12px rgb(15 23 42 / 0.14);
+  --shadow-glow-brand: 0 0 60px rgb(56 113 223 / 0.18);    /* shader hero accent */
+  --shadow-press: inset 0 1px 2px rgb(0 0 0 / 0.06);       /* pressed button */
+
+  /* Spotlight glow used behind hero + dark-band transitions */
+  --gradient-spotlight: radial-gradient(ellipse 60% 40% at 50% 0%, rgb(56 113 223 / 0.15), transparent 55%);
+
+  /* Type scale — modular hybrid (body steps tuned for legibility, display steps follow 1.250 Major Third) */
+  --text-xs: 0.75rem;          /* 12px — metadata, mono labels, disclaimers */
+  --text-xs--line-height: 1.45;
+  --text-sm: 0.875rem;         /* 14px — small body */
+  --text-sm--line-height: 1.5;
+  --text-base: 1rem;           /* 16px — body default */
+  --text-base--line-height: 1.55;
+  --text-md: 1.25rem;          /* 20px — lede / large body */
+  --text-md--line-height: 1.5;
+  --text-lg: 1.5625rem;        /* 25px — sub-heading */
+  --text-lg--line-height: 1.35;
+  --text-xl: 2rem;             /* 32px — section heading */
+  --text-xl--line-height: 1.2;
+  --text-2xl: 2.5rem;          /* 40px — page heading (Tier 2/3) */
+  --text-2xl--line-height: 1.15;
+  --text-3xl: 3.125rem;        /* 50px — hero secondary */
+  --text-3xl--line-height: 1.1;
+  --text-4xl: 4rem;            /* 64px — hero tertiary */
+  --text-4xl--line-height: 1.05;
+  --text-5xl: 5rem;            /* 80px — hero display (mobile) */
+  --text-5xl--line-height: 1;
+  --text-6xl: 6.25rem;         /* 100px — hero display (desktop+) */
+  --text-6xl--line-height: 0.95;
+  --text-7xl: 8rem;            /* 128px — hero display (xl breakpoint) */
+  --text-7xl--line-height: 0.92;
+
+  /* Spacing — semantic section rhythm (additive to Tailwind 4px base) */
+  --space-section-y: clamp(96px, 10vw, 160px);
+  --space-band-y: clamp(64px, 7vw, 112px);
+  --space-gutter: clamp(24px, 4vw, 64px);
+  --max-content: 1280px;
+  --max-narrative: 720px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ----------------------- LIGHT MODE ----------------------- */
+:root {
+  /* Surface */
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+
+  /* Primary = LiseUP brand blue */
+  --primary: #3871df;
+  --primary-foreground: #ffffff;
+
+  /* Secondary = slate */
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+
+  /* Muted */
+  --muted: #f8fafc;
+  --muted-foreground: #64748b;
+
+  /* Accent surfaces (soft brand tint for highlights) */
+  --accent: #eff4fd;
+  --accent-foreground: #1f47a5;
+
+  /* Destructive */
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+
+  /* Borders + focus */
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #3871df;
+
+  --radius: 0.5rem;
+
+  /* Marketing surface scale (Pro/Studio light) */
+  --surface-0: #FBFBF9;     /* page canvas */
+  --surface-1: #FFFFFF;     /* card */
+  --surface-2: #F4F4F2;     /* alt section band */
+  --surface-3: #ECECE9;     /* subtle separator background */
+  --ink: #0A0A0B;           /* primary type — near-black */
+  --ink-2: #3F3F46;         /* secondary type */
+  --ink-3: #71717A;         /* tertiary / metadata */
+  --rule: rgb(10 10 11 / 0.08);
+  --accent-warm: #F2EBDC;        /* parchment / warm cream — counterpoint to brand-blue */
+  --accent-warm-strong: #E5D9BF; /* deeper warm — borders, rules on warm surfaces */
+  --accent-warm-ink: #5C4A2E;    /* warm-tinted ink for text on cream */
+
+  /* Shock accent — single high-saturation moment that breaks the cool palette.
+     Used on max 3-4 elements per page. NEVER as a background fill. */
+  --shock: #FF5300;              /* vivid Turkish-bazaar orange */
+  --shock-ink: #2A0C00;          /* deep burnt edge for text on shock */
+
+  /* Paper canvas — slightly warmer than surface-0, used as the publication ground */
+  --paper: #F5F1E8;
+  --paper-ink: #1A1814;          /* near-black with brown undertone */
+}
+
+/* ----------------------- DARK MODE ----------------------- */
+.dark {
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+  --card: #172033;
+  --card-foreground: #f1f5f9;
+  --popover: #172033;
+  --popover-foreground: #f1f5f9;
+
+  --primary: #5f8fe4;
+  --primary-foreground: #0f172a;
+
+  --secondary: #1e293b;
+  --secondary-foreground: #f1f5f9;
+
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+
+  --accent: #1e293b;
+  --accent-foreground: #8bafee;
+
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+
+  --border: #1e293b;
+  --input: #1e293b;
+  --ring: #5f8fe4;
+
+  /* Marketing surface scale (Pro/Studio dark) */
+  --surface-0: #0A0A0B;
+  --surface-1: #131316;
+  --surface-2: #1C1C20;
+  --surface-3: #26262C;
+  --ink: #FAFAFA;
+  --ink-2: #C9C9D0;
+  --ink-3: #8F8F98;
+  --rule: rgb(255 255 255 / 0.08);
+  --accent-warm: #2A241A;        /* dark warm — cream equivalent on dark BG */
+  --accent-warm-strong: #3D3424; /* slightly lighter warm border on dark */
+  --accent-warm-ink: #E5D9BF;    /* warm cream type on warm-dark surfaces */
+
+  --shock: #FF6A1F;              /* slightly softer orange on dark — preserves saturation feel */
+  --shock-ink: #FFE4D2;
+  --paper: #14110D;
+  --paper-ink: #F2EBDC;
+}
+
+/* ----------------------- BASE ----------------------- */
+@layer base {
+  * {
+    @apply border-border outline-ring/40;
+  }
+
+  html {
+    font-family: var(--font-ui), ui-sans-serif, system-ui, sans-serif;
+    color-scheme: light dark;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  code,
+  pre,
+  .font-mono {
+    font-family: var(--font-mono), ui-monospace, monospace;
+  }
+
+  /* Designed focus ring — not browser default */
+  :focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px var(--ring);
+    border-radius: var(--radius-sm);
+  }
+
+  /* Tabular figures for data */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* LogoStrip marquee */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes marquee-reverse {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+}
+
+/* CalloutCard ambient breathing — gentle, almost subliminal */
+@keyframes pulse-glow {
+  0%, 100% { opacity: var(--pulse-base, 0.18); }
+  50%      { opacity: calc(var(--pulse-base, 0.18) + 0.04); }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 10s ease-in-out infinite;
+}
+
+/* Hero proof-bar marquee — slimmer, slower */
+@keyframes marquee-slow {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.animate-marquee-slow {
+  animation: marquee-slow 42s linear infinite;
+}
+
+/* ----------------------- EDITORIAL SURFACE TEXTURES ----------------------- */
+
+/* Paper grain — fine SVG noise overlay for editorial depth (multiplicative). */
+.surface-paper {
+  background-color: var(--paper);
+  background-image:
+    /* Cheap, deterministic SVG-noise data URI — soft monochrome grain */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.045 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-blend-mode: multiply;
+}
+
+.dark .surface-paper {
+  /* On dark, blend with screen for warm grain rather than darkening */
+  background-blend-mode: screen;
+}
+
+/* Baseline grid — subtle 32px horizontal rules through a section background.
+   Pulled from the publication tradition; intentionally soft (3% opacity). */
+.surface-baseline {
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 31px,
+      rgb(0 0 0 / 0.04) 31px,
+      rgb(0 0 0 / 0.04) 32px
+    );
+}
+
+.dark .surface-baseline {
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 31px,
+      rgb(255 255 255 / 0.04) 31px,
+      rgb(255 255 255 / 0.04) 32px
+    );
+}
+
+/* ── Scroll-triggered reveal — used on section entries ── */
+@keyframes slide-up-fade {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up-fade {
+  animation: slide-up-fade 0.7s var(--ease-instrumental) both;
+}
+
+/* ── Horizontal rule draw — used on section accent lines ── */
+@keyframes draw-x {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+.animate-draw-x {
+  transform-origin: left center;
+  animation: draw-x 0.9s var(--ease-instrumental) both;
+}
+
+/* ── landing-hero-filter — CSS-attribute-selector driven, zero JS reflow ── */
+.filter-card {
+  transition: opacity 240ms cubic-bezier(0.2, 0, 0, 1),
+              transform 240ms cubic-bezier(0.2, 0, 0, 1),
+              filter 240ms cubic-bezier(0.2, 0, 0, 1);
+}
+[data-active-city="istanbul"] .filter-card[data-city]:not([data-city="istanbul"]),
+[data-active-city="ankara"]   .filter-card[data-city]:not([data-city="ankara"]),
+[data-active-city="izmir"]    .filter-card[data-city]:not([data-city="izmir"]) {
+  opacity: 0.18;
+  filter: grayscale(1);
+  transform: scale(0.96);
+}
+[data-active-interest="yazilim"]  .filter-card[data-interest]:not([data-interest="yazilim"]),
+[data-active-interest="tasarim"]  .filter-card[data-interest]:not([data-interest="tasarim"]),
+[data-active-interest="girisim"]  .filter-card[data-interest]:not([data-interest="girisim"]),
+[data-active-interest="muzik"]    .filter-card[data-interest]:not([data-interest="muzik"]) {
+  opacity: 0.18;
+  filter: grayscale(1);
+  transform: scale(0.96);
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
