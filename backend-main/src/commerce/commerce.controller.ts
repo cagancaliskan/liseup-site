@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   Param,
   Patch,
@@ -94,13 +95,19 @@ export class CommerceController {
 
   @Auth(Role.User)
   @Patch('cart/:id')
-  updateCartItem(@Param('id') id: string, @Body() data: NewCartItem) {
+  async updateCartItem(@Req() req: Request, @Param('id') id: string, @Body() data: NewCartItem) {
+    const userId = (req as any).user.userId as string;
+    const item = await this.commerce.findCartItemById(id);
+    if (!item || item.user_id !== userId) throw new ForbiddenException();
     return this.commerce.updateCartItem(id, data);
   }
 
   @Auth(Role.User)
   @Delete('cart/:id')
-  removeFromCart(@Param('id') id: string) {
+  async removeFromCart(@Req() req: Request, @Param('id') id: string) {
+    const userId = (req as any).user.userId as string;
+    const item = await this.commerce.findCartItemById(id);
+    if (!item || item.user_id !== userId) throw new ForbiddenException();
     return this.commerce.removeFromCart(id);
   }
 

@@ -26,16 +26,19 @@ export class AuthService {
    * @param token  Raw JWT access token (without "Bearer " prefix).
    */
   async validateUser(roles: Role[], token: string): Promise<UserPayload | null> {
-    const payload: UserPayload = await this.jwtService.verifyAsync(token, {
-      secret: this.config.get<string>('JWT_ACCESS_SECRET'),
-    });
+    let payload: UserPayload;
+    try {
+      payload = await this.jwtService.verifyAsync(token, {
+        secret: this.config.get<string>('JWT_ACCESS_SECRET'),
+      });
+    } catch {
+      return null;
+    }
 
-    // No role restriction — just verify the token is valid
     if (!roles || roles.length === 0) {
       return payload;
     }
 
-    // Use the hierarchy: an Admin satisfies Mentor routes, Mentor satisfies User routes, etc.
     return satisfiesAny(payload.role, roles) ? payload : null;
   }
 

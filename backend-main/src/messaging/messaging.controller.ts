@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   Param,
   Patch,
@@ -42,7 +43,10 @@ export class MessagingController {
 
   @Auth()
   @Patch('messages/:id/read')
-  markAsRead(@Param('id') id: string) {
+  async markAsRead(@Req() req: Request, @Param('id') id: string) {
+    const userId = (req as any).user.userId as string;
+    const message = await this.messaging.findMessageById(id);
+    if (!message || message.receiver_id !== userId) throw new ForbiddenException();
     return this.messaging.markAsRead(id);
   }
 
