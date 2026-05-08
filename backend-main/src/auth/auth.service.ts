@@ -47,7 +47,7 @@ export class AuthService {
    * @param userAgent The client's user-agent string (used as device name)
    * @returns session tokens, or null in case of access denial
    */
-  async signIn(username: string, password: string, userAgent: string): Promise<any> {
+  async signIn(username: string, password: string, userAgent: string): Promise<{ user: UserPayload; accessToken: string; refreshToken: string } | null> {
     const user = await this.authRepo.findUserByEmail(username);
     if (!user) return null;
 
