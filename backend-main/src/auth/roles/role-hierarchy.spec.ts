@@ -10,6 +10,7 @@ describe('role-hierarchy with SchoolAdmin', () => {
     expect(canAccess(Role.SchoolAdmin, Role.User)).toBe(false);
     expect(canAccess(Role.SchoolAdmin, Role.Admin)).toBe(false);
     expect(canAccess(Role.SchoolAdmin, Role.Vendor)).toBe(false);
+    expect(canAccess(Role.SchoolAdmin, Role.Mentor)).toBe(false);
   });
   it('satisfiesAny returns true when any required role is satisfied', () => {
     expect(satisfiesAny(Role.Admin, [Role.SchoolAdmin, Role.Vendor])).toBe(true);
